@@ -1,0 +1,37 @@
+package com.jobportal.Job.Portal.JWT;
+
+import com.jobportal.Job.Portal.DTO.UserDTO;
+import com.jobportal.Job.Portal.Exception.JobPortalException;
+import com.jobportal.Job.Portal.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+
+@Service
+public class MyUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserService userService;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        try {
+            UserDTO dto = userService.getUserByEmail(email);
+            return new CustomUserDetails(
+                    dto.getId(),
+                    email,
+                    dto.getName(),
+                    dto.getPassword(),
+                    dto.getProfileId(),
+                    dto.getAccountType(),
+                    new ArrayList<>()
+            );
+        } catch (JobPortalException e) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+    }
+}
