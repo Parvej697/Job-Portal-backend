@@ -50,10 +50,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*"); // ✅ sab origins allow (sirf dev/test ke liye)
-        configuration.addAllowedMethod("*");        // ✅ sab methods allow
-        configuration.addAllowedHeader("*");        // ✅ sab headers allow
-        configuration.setAllowCredentials(true);    // ✅ cookies/credentials allow
+
+        // ✅ allowed origins clearly define kar
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000",               // dev frontend
+                "https://job-portal-frontend.onrender.com" // prod frontend (example)
+        ));
+
+        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);  // ✅ ab ye chalega kyunki origins fixed hain
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
